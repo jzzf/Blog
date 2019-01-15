@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    我的网站
+{% endblock %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'blog/blog.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-7">
+            <div class="card">
+                <div class="card-header">
+                    <h4>博客(一共有{{ blogs|length }}篇博文)</h4>
+                </div>
+                <div class="card-body">
+                    {% for blog in blogs %}
+                        <div class="blog">
+                            <h3><a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a></h3>
+                            <p>{{ blog.content|truncatechars:30 }}</p>
+                        </div>
+                    {% empty %}
+                    <div class="blog">
+                        <p>--暂无博客, 敬请期待--</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>博客分类</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        {% for blog_type in blog_types %}
+                            <li><a href="{% url 'blogs_with_type' blog_type.pk %}">{{ blog_type.type_name }}</a></li>
+                        {% empty %}
+                            <li>暂无分类</li>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
