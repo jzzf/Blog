@@ -31,15 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'ckeditor_uploader',
-    'ckeditor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor_uploader',
+    'ckeditor',
     'blog',
+    'read_statistics',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # editor upload
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}

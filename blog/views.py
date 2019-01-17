@@ -1,7 +1,8 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Count
-from .models import Blog, BlogType, ReadNum
+from .models import Blog, BlogType
+from read_statistics.utils import read_statistics_once_read
 
 def get_blog_list_common_data(request, blogs_all_list):
 
@@ -53,15 +54,7 @@ def blogs_with_date(request, year, month):
 
 def blog_detail(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk)
-    if not request.COOKIES.get('blog_%s_readed' % blog_pk):
-        if ReadNum.objects.filter(blog=blog).count():
-            readnum = ReadNum.objects.get(blog=blog)
-        else:
-            readnum = ReadNum(blog=blog)
-        readnum.read_num += 1
-        readnum.save()
-
-
+    read_cookie_key = read_statistics_once_read(request, blog)
     context = {}
 
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog.created_time).last()
@@ -69,5 +62,5 @@ def blog_detail(request, blog_pk):
     context['blog'] = blog
 
     response = render_to_response('blog/blog_detail.html', context)
-    response.set_cookie('blog_%s_readed' % blog_pk, 'true', )
+    response.set_cookie(read_cookie_key, 'true')
     return response

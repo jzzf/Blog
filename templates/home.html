@@ -13,5 +13,10 @@
 {% block content %}
     <h3 class="home-content">欢迎访问我的网站</h3>
 
-
+    {% for hot_data in today_hot_data %}
+        <li>{{ hot_data.object_id }}({{ hot_data.read_num }})</li>
+        <a href="{% url 'blog_detail' hot_data.content_object.pk %}">{{ hot_data.content_object.title }}</a>
+    {% empty %}
+        no hot
+    {% endfor %}
 {% endblock %}
