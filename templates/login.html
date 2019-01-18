@@ -1,0 +1,27 @@
+
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}
+    我的网站|Login
+{% endblock %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-4 col-xs-offset-4">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    {{ login_form }}
+                    <input type="submit" name="login">
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

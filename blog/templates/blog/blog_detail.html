@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block header_extends %}
-    <link rel="stylesheet" href="{% static 'blog/blog_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/detail.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -36,6 +36,38 @@
                             No blog
                         {% endif %}
                     </p>
+                </div>
+                <div class="comment-area">
+                    <h3 class="comment-area-title">Comment submit</h3>
+                    {% if user.is_authenticated %}
+
+                        <form action="{% url 'update_comment' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="comment_text">{{ user.username }}已登陆</label>
+                                <textarea name="text" class="form-control" id="comment_text"></textarea>
+                            </div>
+                            
+                            <input type="hidden" name="object_id" value="{{ blog.pk }}">
+                            <input type="hidden" name="content_type" value="blog">
+                            <input type="submit" value="评论" class="btn btn-primary">
+                        </form>
+                    {% else %}
+                        未登陆
+                        <a href="{% url 'login' %}?from={{ request.get_full_path }}">Login</a>
+                    {% endif %}
+                </div>
+                <div class="comment-area">
+                    <h3 class="comment-area-title">Comment List</h3>
+                    {% for comment in comments %}
+                        <div>
+                            {{ comment.user.username }}
+                            {{ comment.comment_time|date:"Y-m-d H:i:s" }}:
+                            {{ comment.text }}
+                        </div>
+                    {% empty %}
+
+                    {% endfor %}
                 </div>
             </div>
         </div>
