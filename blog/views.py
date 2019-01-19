@@ -67,5 +67,5 @@ def blog_detail(request, blog_pk):
     context['comments'] = comments
 
     response = render(request, 'blog/blog_detail.html', context)
-    response.set_cookie(read_cookie_key, 'true', 60*60*24)
+    response.set_cookie(read_cookie_key, 'true', 10)
     return response
