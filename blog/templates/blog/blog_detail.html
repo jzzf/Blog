@@ -7,6 +7,8 @@
 
 {% block header_extends %}
     <link rel="stylesheet" href="{% static 'blog/detail.css' %}">
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -40,17 +42,21 @@
                 <div class="comment-area">
                     <h3 class="comment-area-title">Comment submit</h3>
                     {% if user.is_authenticated %}
+                        <form id="comment_form" action="{% url 'update_comment' %}" method="POST">
+                            <label>{{ user.username }}已登陆</label>
+                            <div id="reply_content_container" style="display: none;">
+                                <p>Reply: </p>
+                                <div id="reply_content">
 
-                        <form action="{% url 'update_comment' %}" method="POST">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                <label for="comment_text">{{ user.username }}已登陆</label>
-                                <textarea name="text" class="form-control" id="comment_text"></textarea>
+                                </div>
+
                             </div>
-                            
-                            <input type="hidden" name="object_id" value="{{ blog.pk }}">
-                            <input type="hidden" name="content_type" value="blog">
-                            <input type="submit" value="评论" class="btn btn-primary">
+                            {% csrf_token %}
+                            {% for field in comment_form %}
+                                {{ field }}
+                            {% endfor %}
+                            <span id="comment_error" class="text-danger pull-left"></span>
+                            <input type="submit" value="评论" class="btn btn-primary float-right">
                         </form>
                     {% else %}
                         未登陆
@@ -61,18 +67,84 @@
                 </div>
                 <div class="comment-area">
                     <h3 class="comment-area-title">Comment List</h3>
-                    {% for comment in comments %}
-                        <div>
-                            {{ comment.user.username }}
-                            {{ comment.comment_time|date:"Y-m-d H:i:s" }}:
-                            {{ comment.text }}
-                        </div>
-                    {% empty %}
+                    <div id="comment_list">
+                        {% for comment in comments %}
+                            <div class="comment">
+                                {{ comment.user.username }}
+                                {{ comment.comment_time|date:"Y-m-d H:i:s" }}:
+                                <div id="comment_{{ comment_pk }}">
+                                    {{ comment.text|safe }}
+                                </div>
+                                <a href="javascript:reply({{ comment.pk }});">Reply</a>
 
-                    {% endfor %}
+                                {% for reply in comment.root_comment.all %}
+                                    <div class="reply">
+                                        {{ reply.user.username }}
+                                        ({{ reply.comment_time|date:"Y-m-d H:i:s" }})
+                                        Reply to
+                                        {{ reply.reply_to.username }}:
+                                        <div id="comment_{{ reply.pk }}">
+                                            {{ reply.text|safe }}
+                                        </div>
+
+                                        <a href="javascript:reply({{ reply.pk }});">Reply</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% empty %}
+
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 {% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $('#comment_form').submit(function(){
+            $('#comment_error').text('');
+            if(CKEDITOR.instances['id_text'].document.getBody().getText().trim()==''){
+                $('#comment_error').text('Comment can not be blank');
+                return false;
+            }
+
+            $.ajax({
+                url: "{% url 'update_comment' %}",
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function(data){
+                    console.log(data);
+                    if(data['status'] == 'SUCCESS'){
+                        var comment_html = '<div>' + data['username'] +
+                                            ' (' + data['comment_time'] + '): ' +
+                                            data['text'] + '</div>';
+                        $('#comment_list').prepend(comment_html);
+
+                        CKEDITOR.instances['id_text'].setData('');
+                    }else{
+                        $('#comment_error').text(data['message']);
+                    }
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                }
+            });
+            return false;
+        });
+
+        function reply(reply_comment_id){
+            $('#reply_comment_id').val(reply_comment_id);
+            $('#reply_content').html();
+            $('#reply_content_container').show();
+
+            $('html').animate({scrollTop: $('#comment_form').offset().top - 70}, 300, function(){
+                CKEDITOR.instances['id_text'].focus();
+            })
+        }
+    </script>
+{% endblock %}
+
