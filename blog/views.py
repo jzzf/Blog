@@ -65,7 +65,7 @@ def blog_detail(request, blog_pk):
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt=blog.created_time).first()
     context['blog'] = blog
-    context['comments'] = comments
+    context['comments'] = comments.order_by('-comment_time')
     data = {}
     data['content_type'] = blog_content_type.model
     data['object_id'] = blog_pk

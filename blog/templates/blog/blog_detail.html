@@ -46,10 +46,7 @@
                             <label>{{ user.username }}已登陆</label>
                             <div id="reply_content_container" style="display: none;">
                                 <p>Reply: </p>
-                                <div id="reply_content">
-
-                                </div>
-
+                                <div id="reply_content"></div>
                             </div>
                             {% csrf_token %}
                             {% for field in comment_form %}
@@ -69,20 +66,20 @@
                     <h3 class="comment-area-title">Comment List</h3>
                     <div id="comment_list">
                         {% for comment in comments %}
-                            <div class="comment">
-                                {{ comment.user.username }}
-                                {{ comment.comment_time|date:"Y-m-d H:i:s" }}:
-                                <div id="comment_{{ comment_pk }}">
+                            <div id="root_{{ comment.pk }}" class="comment">
+                                <span>{{ comment.user.username }}</span>
+                                <span>{{ comment.comment_time|date:"Y-m-d H:i:s" }}:</span>
+                                <div id="comment_{{ comment.pk }}">
                                     {{ comment.text|safe }}
                                 </div>
                                 <a href="javascript:reply({{ comment.pk }});">Reply</a>
 
                                 {% for reply in comment.root_comment.all %}
                                     <div class="reply">
-                                        {{ reply.user.username }}
-                                        ({{ reply.comment_time|date:"Y-m-d H:i:s" }})
-                                        Reply to
-                                        {{ reply.reply_to.username }}:
+                                        <span>{{ reply.user.username }}</span>
+                                        <span>({{ reply.comment_time|date:"Y-m-d H:i:s" }})</span>
+                                        <span>Reply to</span>
+                                        <span>{{ reply.reply_to.username }}:</span>
                                         <div id="comment_{{ reply.pk }}">
                                             {{ reply.text|safe }}
                                         </div>
@@ -92,7 +89,7 @@
                                 {% endfor %}
                             </div>
                         {% empty %}
-
+                            <span id="no_comment">暂无评论</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -111,6 +108,8 @@
                 return false;
             }
 
+            CKEDITOR.instances['id_text'].updateElement();
+
             $.ajax({
                 url: "{% url 'update_comment' %}",
                 type: 'POST',
@@ -119,12 +118,24 @@
                 success: function(data){
                     console.log(data);
                     if(data['status'] == 'SUCCESS'){
-                        var comment_html = '<div>' + data['username'] +
-                                            ' (' + data['comment_time'] + '): ' +
-                                            data['text'] + '</div>';
-                        $('#comment_list').prepend(comment_html);
+
+
+                        if ($('#reply_comment_id').val() == 0){
+                            // insert comment
+                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + data['comment_time'] + '): </span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">Reply</a></div>';
+                            $('#comment_list').prepend(comment_html);
+                        }else{
+                            // insert reply
+
+                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span> (' + data['comment_time'] + ') </span><span> Reply to </span><span>' + data['reply_to'] + ':</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">Reply</a></div>';
+                            $("#root_" + data['root_pk']).append(reply_html);
+                        }
 
                         CKEDITOR.instances['id_text'].setData('');
+                        $('#reply_content_container').hide();
+                        $('#reply_comment_id').val('0');
+                        $('#no_comment').remove();
+
                     }else{
                         $('#comment_error').text(data['message']);
                     }
@@ -138,7 +149,8 @@
 
         function reply(reply_comment_id){
             $('#reply_comment_id').val(reply_comment_id);
-            $('#reply_content').html();
+            var html = $('#comment_' + reply_comment_id).html();
+            $('#reply_content').html(html);
             $('#reply_content_container').show();
 
             $('html').animate({scrollTop: $('#comment_form').offset().top - 70}, 300, function(){

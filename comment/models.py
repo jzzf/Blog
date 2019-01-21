@@ -20,5 +20,5 @@ class Comment(models.Model):
         return self.text
 
     class Meta:
-        ordering = ['-comment_time']
+        ordering = ['comment_time']
 
