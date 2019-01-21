@@ -29,7 +29,7 @@ def update_comment(request):
 
         data['status'] = 'SUCCESS'
         data['username'] = comment.user.username
-        data['comment_time'] = comment.comment_time.strftime('%Y-%m-%d %H:%M:%S')
+        data['comment_time'] = comment.comment_time.timestamp()
         data['text'] = comment.text
 
         if parent is not None:

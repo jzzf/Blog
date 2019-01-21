@@ -36,3 +36,11 @@ div.comment {
 div.reply {
     margin-left: 2em;
 }
+
+div#reply_content_container {
+    border: 1px solid #f8f8f8;
+    background-color: #f8f8f8;
+    border-bottom: none;
+    overflow: hidden;
+    padding: 1em 1em 0.5em;
+}

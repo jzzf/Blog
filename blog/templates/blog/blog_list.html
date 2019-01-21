@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load comment_tags %}
 
 {% block title %}
     我的网站
@@ -23,7 +24,7 @@
                             <h3><a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a></h3>
                             <p class="blog-info">
                                 分类：<a href="{% url 'blogs_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a>
-                                {{ blog.created_time|date:"Y-m-d" }} 阅读：{{ blog.get_read_num }}
+                                &nbsp; {{ blog.created_time|date:"Y-m-d" }} &nbsp; 阅读：{{ blog.get_read_num }}&nbsp; 评论：{% get_comment_count blog %}
                             </p>
                             <p>{{ blog.content|truncatechars:30 }}</p>
                         </div>
