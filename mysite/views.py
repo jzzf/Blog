@@ -49,3 +49,7 @@ def register(request):
         reg_form = RegForm()
     context = {'reg_form': reg_form}
     return render(request, 'register.html', context)
+
+def logout(request):
+    auth.login(request)
+    return redirect(request.GET.get('from', reverse('home')))

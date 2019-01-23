@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load comment_tags %}
+{% load likes_tags %}
 
 {% block title %}
     {{ blog.title }}
@@ -8,6 +9,7 @@
 
 {% block header_extends %}
     <link rel="stylesheet" href="{% static 'blog/detail.css' %}">
+    <link rel="stylesheet" href="{% static 'css/all.css' %}">
     <script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
     <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 {% endblock %}
@@ -25,6 +27,11 @@
                     <li>评论：({% get_comment_count blog %})</li>
                 </ul>
                 <div class="blog-content">{{ blog.content }}</div>
+                <div class="like" onclick="likeChange(this, 'blog', {{ blog.pk }})">
+                    <span class="fas fa-thumbs-up {% get_like_status blog %}"></span>
+                    <span class="liked_num">{% get_like_count blog %}</span>
+                    <span>Like</span>
+                </div>
                 <div class="blog-more">
                     <p>Previous:
                         {% if previous_blog %}
@@ -100,11 +107,41 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+<div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Login</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 
 {% block script_extends %}
     <script type="text/javascript">
+
+        String.prototype.format = function(){
+            var str = this;
+            for (var i = 0; i < arguments.length; i++){
+                var str = str.replace(new RegExp('\\{' + i + '\\}', 'g'), arguments[i])
+            };
+            return str;
+        }
+
         function reply(reply_comment_id){
             $('#reply_comment_id').val(reply_comment_id);
             var html = $('#comment_' + reply_comment_id).html();
@@ -152,12 +189,26 @@
 
                         if ($('#reply_comment_id').val() == 0){
                             // insert comment
-                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment"><span>' + data['username'] + '</span><span>(' + timeFormat(data['comment_time']) + '): </span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">Reply</a></div>';
+                            var comment_html = '<div id="root_{0}" class="comment">' +
+                                '<span>{1}</span>' +
+                                '<span>{2}:</span>' +
+                                '<div id="comment_{0}">{3}</div>' +
+                                '<a href="javascript:reply({0});">Reply</a>' +
+                                '</div>';
+                            comment_html = comment_html.format(data['pk'], data['username'], timeFormat(data['comment_time']), data['text']);
                             $('#comment_list').prepend(comment_html);
                         }else{
                             // insert reply
 
-                            var reply_html = '<div class="reply"><span>' + data['username'] + '</span><span> (' + timeFormat(data['comment_time']) + ') </span><span> Reply to </span><span>' + data['reply_to'] + ':</span><div id="comment_' + data['pk'] + '">' + data['text'] + '</div><a href="javascript:reply(' + data['pk'] + ');">Reply</a></div>';
+                            var reply_html = '<div class="reply">' +
+                                        '<span>{1}</span>' +
+                                        '<span>({2})</span>' +
+                                        '<span>Reply to</span>' +
+                                        '<span>{3}:</span>' +
+                                        '<div id="comment_{0}">{4}</div>' +
+                                        '<a href="javascript:reply({0});">Reply</a>' +
+                                    '</div>';
+                            reply_html = reply_html.format(data['pk'], data['username'], timeFormat(data['comment_time']), data['reply_to'], data['text']);
                             $("#root_" + data['root_pk']).append(reply_html);
                         }
 
@@ -176,6 +227,40 @@
             });
             return false;
         });
+
+        function likeChange(obj, content_type, object_id){
+            var is_like = obj.getElementsByClassName('active').length == 0;
+            $.ajax({
+                url: '{% url 'like_change' %}',
+                type: 'GET',
+                data: {
+                    content_type: content_type,
+                    object_id: object_id,
+                    is_like: is_like
+                },
+                cache: false,
+                success: function(data){
+                    console.log(data);
+                    if(data['status']=='SUCCESS'){
+                        var element = $(obj.getElementsByClassName('fas'));
+                        if(is_like){
+                            element.addClass('active');
+                        }else{
+                            element.removeClass('active');
+                        }
+
+                        var liked_num = $(obj.getElementsByClassName('liked-num'));
+                        liked_num.text[data['liked_num']];
+                    }else{
+                        alert(data['message']);
+                    }
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                }
+
+            });
+        }
 
 
     </script>

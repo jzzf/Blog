@@ -8,6 +8,7 @@ ul.blog-info-description li {
 
 div.blog-content {
     text-indent: 2em;
+    margin-bottom: 2em;
 }
 
 div.blog-more {
@@ -43,4 +44,14 @@ div#reply_content_container {
     border-bottom: none;
     overflow: hidden;
     padding: 1em 1em 0.5em;
+}
+
+div.like {
+    color: #007bfe;
+    cursor: pointer;
+    display: inline-block;
+}
+
+div.like .active {
+    color: #f22;
 }
