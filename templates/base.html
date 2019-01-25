@@ -39,7 +39,7 @@
                         {{ user.username }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Information</a>
+                        <a class="dropdown-item" href="{% url 'user_info' %}">Information</a>
                         <a class="dropdown-item" href="{% url 'logout' %}?from={{ request.get_full_path }}">Log out</a>
                     </div>
                 </li>

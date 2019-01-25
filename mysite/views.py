@@ -53,3 +53,7 @@ def register(request):
 def logout(request):
     auth.login(request)
     return redirect(request.GET.get('from', reverse('home')))
+
+def user_info(request):
+    context = {}
+    return render(request, 'user_info.html', context)
