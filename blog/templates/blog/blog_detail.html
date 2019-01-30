@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" style="margin-top: 70px;">
         <div class="row justify-content-center">
             <div class="col-10">
                 <h3>{{ blog.title }}</h3>
@@ -26,7 +26,7 @@
                     <li>阅读：({{ blog.get_read_num }})</li>
                     <li>评论：({% get_comment_count blog %})</li>
                 </ul>
-                <div class="blog-content">{{ blog.content }}</div>
+                <div class="blog-content">{{ blog.content|safe }}</div>
                 <div class="like" onclick="likeChange(this, 'blog', {{ blog.pk }})">
                     <span class="fas fa-thumbs-up {% get_like_status blog %}"></span>
                     <span class="liked_num">{% get_like_count blog %}</span>

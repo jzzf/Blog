@@ -160,3 +160,12 @@ CKEDITOR_CONFIGS = {
     }
 }
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'zhaoyli311@gmail.com'
+EMAIL_HOST_PASSWORD = 'Kirito311'
+EMAIL_SUBJECT_PREFIX = 'Blog'
+EMAIL_USE_TLS = True
+
