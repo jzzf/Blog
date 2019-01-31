@@ -46,7 +46,9 @@
                         {% if user.is_staff or user.is_superuser %}
                             <a class="dropdown-item" href="{% url 'admin:index' %}">Management</a>
                         {% endif %}
+                        <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
                         <a class="dropdown-item" href="{% url 'logout' %}?from={{ request.get_full_path }}">Log out</a>
+
                     </div>
                 </li>
             {% endif %}

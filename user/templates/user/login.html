@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" style="margin-top: 70px">
         <div class="row">
             <div class="col">
 
@@ -29,8 +29,10 @@
                                     {{ field }}
                                     <p class="text-danger">{{ field.errors.as_text }}</p>
                                 {% endfor %}
-                                <span class="pull-left text-danger">{{ login_form.non_field_errors }}</span>
-                                <input type="submit" name="login" class="btn btn-primary">
+                                <span class="text-danger">{{ login_form.non_field_errors }}</span>
+                                <div class="clearfix"></div>
+                                <a href="{% url 'forgot_password' %}" class="float-left">Forget password?</a>
+                                <input type="submit" name="login" class="btn btn-primary float-right">
                             </form>
                         </div>
                     {% else %}

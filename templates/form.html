@@ -14,7 +14,7 @@
                         <h3>{{ form_title }}</h3>
                     </div>
                     <div class="card-body">
-                        <form action="{% url 'change_nickname' %}" method="POST">
+                        <form action="" method="POST">
                             {% csrf_token %}
                             {% for field in form %}
                                 {% if not field.is_hidden %}

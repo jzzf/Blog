@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container" style="margin-top: 70px">
         <div class="row">
             <div class="col">
 
@@ -29,8 +29,10 @@
                                     {{ field }}
                                     <p class="text-danger">{{ field.errors.as_text }}</p>
                                 {% endfor %}
-                                <span class="pull-left text-danger">{{ reg_form.non_field_errors }}</span>
-                                <input type="submit" name="Register" class="btn btn-primary">
+                                <span class="text-danger">{{ reg_form.non_field_errors }}</span>
+                                <div class="clearfix"></div>
+                                <button id="send_code" class="btn btn-primary float-left">Verify</button>
+                                <input type="submit" name="Register" class="btn btn-primary float-right">
                             </form>
                         </div>
                     {% else %}
@@ -48,4 +50,48 @@
     </div>
 
 
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $('#send_code').click(function(){
+            var email = $('#id_email').val();
+            if (email == ''){
+                $('#tip').text('Email can not be blank');
+                return false;
+            }
+
+            $.ajax({
+                url: '{% url 'send_verification_code' %}',
+                type: GET,
+                cache: false,
+                data: {
+                    'email:': email,
+                    'send_for': 'register_code
+                    },
+                success: function(data){
+                    if(data['status']==ERROR){
+                        alert(data['status']);
+                    }
+                }
+            });
+
+            $('#send_code').addClass('disabled');
+            $('#send_code').attr('disabled', true);
+            var time = 30;
+            $(this).text(time + 's');
+            var interval = setInterval(() => {
+                if(time <= 0){
+                    clearInterval(interval);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('Verify');
+                    return false;
+                }
+
+                time --;
+                $(this).text(time + 's');
+            }, 1000);
+        });
+    </script>
 {% endblock %}
