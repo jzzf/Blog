@@ -185,7 +185,7 @@ class ChangePasswordForm(forms.Form):
 
 
 class ForgotPasswordForm(forms.Form):
-    u email = forms.EmailField(label='Email',
+    email = forms.EmailField(label='Email',
                              widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Input email'}))
 
     verification_code = forms.CharField(label='Verification code',

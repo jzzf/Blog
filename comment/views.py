@@ -26,6 +26,7 @@ def update_comment(request):
             comment.reply_to = parent.user
         comment.save()
 
+        comment.send_mail()
 
         data['status'] = 'SUCCESS'
         data['username'] = comment.user.username
