@@ -3,4 +3,6 @@ db.sqlite3
 .idea
 __pycache__/
 *.css
-mysite/settings.py
+settings.py
+1.png
+4.png
