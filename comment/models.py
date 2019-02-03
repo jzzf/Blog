@@ -28,6 +28,7 @@ class Comment(models.Model):
     comment_time = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
 
+
     root = models.ForeignKey('self', related_name='root_comment', null=True, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name='parent_comment', null=True, on_delete=models.CASCADE)
     reply_to = models.ForeignKey(User, null=True, related_name='replies', on_delete=models.CASCADE)
