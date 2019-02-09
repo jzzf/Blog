@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 
+
 class SendMail(threading.Thread):
     def __init__(self, subject, text, email, fail_silently=False):
         self.subject = subject
@@ -16,7 +17,8 @@ class SendMail(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        send_mail(self.subject, '', settings.EMAIL_HOST_USER, [self.email], fail_silently=self.fail_silently, html_message=self.text)
+        send_mail(self.subject, '', settings.EMAIL_HOST_USER, [self.email], fail_silently=self.fail_silently,
+                  html_message=self.text)
 
 
 class Comment(models.Model):
@@ -27,7 +29,6 @@ class Comment(models.Model):
     text = models.TextField()
     comment_time = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
-
 
     root = models.ForeignKey('self', related_name='root_comment', null=True, on_delete=models.CASCADE)
     parent = models.ForeignKey('self', related_name='parent_comment', null=True, on_delete=models.CASCADE)
@@ -50,10 +51,8 @@ class Comment(models.Model):
             send_mail = SendMail(subject, text, email)
             send_mail.start()
 
-
     def __str__(self):
         return self.text
 
     class Meta:
         ordering = ['comment_time']
-
