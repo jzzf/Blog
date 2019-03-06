@@ -51,7 +51,7 @@ class RegForm(forms.Form):
     def __init__(self, *args, **kwargs):
         if 'request' in kwargs:
             self.request = kwargs.pop('request')
-        super().__init(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         code = self.request.session.get('register_code', '')
