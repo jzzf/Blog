@@ -14,20 +14,18 @@
 {% block content %}
 <div class="container" style="margin-top: 70px;">
     <div class="row">
-        <div class="col-7">
-            <div class="card">
-                <div class="card-header">
-                    <h4>{% block blog_list_title %}博客(一共有{{ page_of_blogs.paginator.count }}篇博文){% endblock %}</h4>
-                </div>
+        <div class="col-9">
+            <div class="card border-0">
+
                 <div class="card-body">
                     {% for blog in blogs %}
                         <div class="blog">
-                            <h3><a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a></h3>
+                            <h4><a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a></h4>
                             <p class="blog-info">
                                 分类：<a href="{% url 'blogs_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a>
                                 &nbsp; {{ blog.created_time|date:"Y-m-d" }} &nbsp; 阅读：{{ blog.get_read_num }}&nbsp;评论：{% get_comment_count blog %} &nbsp; 点赞: ({% get_like_count blog %})
                             </p>
-                            <p>{{ blog.content|truncatechars:30|safe }}</p>
+                            <p>{{ blog.content|truncatechars:50|safe }}</p>
                         </div>
                     {% empty %}
                     <div class="blog">
@@ -36,13 +34,13 @@
                     {% endfor %}
                 </div>
             </div>
-            <div>
 
+            <div>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
                             {% if page_of_blogs.has_previous %}
-                                <a class="page-link" href="?page={{ page_of_blogs.previous_page_number }}" tabindex="-1" aria-disabled="true">Previous</a>
+                                <a class="page-link" href="?page={{ page_of_blogs.previous_page_number }}" tabindex="-1" aria-disabled="true" >Previous</a>
                             {% else %}
                                 <a class="page-link" href="?page=1" tabindex="-1" aria-disabled="true">Previous</a>
                             {% endif %}
@@ -67,11 +65,9 @@
                 </nav>
             </div>
         </div>
-        <div class="col-3">
+
+        <div class="col-2">
             <div class="card">
-                <div class="card-header">
-                    <h4>博客分类</h4>
-                </div>
                 <div class="card-body">
                     <div class="card-title">
                         {% for blog_type in blog_types %}
@@ -84,13 +80,6 @@
                             <li>暂无分类</li>
                         {% endfor %}
                     </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <h4>日期分类</h4>
-                </div>
-                <div class="card-body">
                     <div class="card-title">
                         {% for blog_date, blog_count in blog_dates.items %}
                             <a href="{% url 'blogs_with_date' blog_date.year blog_date.month %}">
@@ -101,6 +90,7 @@
                 </div>
             </div>
         </div>
+
 
     </div>
 </div>
