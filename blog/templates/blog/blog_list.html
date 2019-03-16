@@ -14,7 +14,7 @@
 {% block content %}
 <div class="container" style="margin-top: 70px;">
     <div class="row">
-        <div class="col-9">
+        <div class="col-7">
             <div class="card border-0">
 
                 <div class="card-body">
@@ -25,7 +25,7 @@
                                 分类：<a href="{% url 'blogs_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a>
                                 &nbsp; {{ blog.created_time|date:"Y-m-d" }} &nbsp; 阅读：{{ blog.get_read_num }}&nbsp;评论：{% get_comment_count blog %} &nbsp; 点赞: ({% get_like_count blog %})
                             </p>
-                            <p>{{ blog.content|truncatechars:50|safe }}</p>
+                            <p>{{ blog.content|truncatechars:100|safe }}</p>
                         </div>
                     {% empty %}
                     <div class="blog">

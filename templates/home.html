@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load staticfiles %}
+{% load static %}
 
 
 {% block title %}
@@ -14,6 +14,7 @@
 {% block content %}
 
 
+<!--
 
     {% for hot_data in today_hot_data %}
         <li>{{ hot_data.object_id }}({{ hot_data.read_num }})</li>
@@ -21,4 +22,5 @@
     {% empty %}
         no hot
     {% endfor %}
+-->
 {% endblock %}
